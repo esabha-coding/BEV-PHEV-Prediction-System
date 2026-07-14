@@ -1,6 +1,6 @@
 # BEVPHEV Prediction System — Hosted Service
 
-An end-to-end, production-ready, hosted service for classifying Electric Vehicles as either a **Battery Electric Vehicle (BEV)** or a **Plug-in Hybrid Electric Vehicle (PHEV)**. It consists of a high-performance **FastAPI backend** that hosts a trained Decision Tree Classifier, and a premium **React frontend dashboard** featuring BMW-inspired colors, vehicle lookups, KPI metrics, and an interactive decision path visualization.
+An end-to-end, production-ready, hosted service for classifying Electric Vehicles as either a **Battery Electric Vehicle (BEV)** or a **Plug-in Hybrid Electric Vehicle (PHEV)**. It consists of a high-performance **FastAPI backend** that hosts a trained Decision Tree Classifier, and a premium **React frontend dashboard** featuring BMW-inspired colors, vehicle lookups, KPI metrics, animated Recharts analytics, and an interactive decision path visualization.
 
 ---
 
@@ -13,10 +13,11 @@ BEVPHEV Prediction System/
 │   ├── Dockerfile                  # Container definition for FastAPI
 │   ├── main.py                     # FastAPI server & prediction routes
 │   ├── requirements.txt            # Python dependencies
-│   └── train_model.py              # Script to clean data and train scikit-learn model
+│   ├── train_model.py              # Script to clean data and train scikit-learn model
+│   └── test_backend.py             # Test harness to verify routes locally
 ├── frontend/
 │   ├── src/
-│   │   ├── App.jsx                 # Dashboard React component with dynamic tree rendering
+│   │   ├── App.jsx                 # Dashboard React component with dynamic tree rendering & Recharts
 │   │   ├── index.css               # Stylesheet (Tailwind, Inter font, custom utilities)
 │   │   └── main.jsx                # React Entrypoint
 │   ├── Dockerfile                  # Stage-1 build Node, Stage-2 serve Nginx
@@ -26,6 +27,7 @@ BEVPHEV Prediction System/
 │   ├── tailwind.config.js          # Tailwind custom palette configuration
 │   └── vite.config.js              # Vite server & proxy mapping
 ├── docker-compose.yml              # Multi-container orchestration
+├── .gitignore                      # Git configuration to exclude temporary build & env folders
 ├── Electric_Vehicle_Population_Data.csv # Main vehicle dataset (36MB)
 ├── ev_decision_tree_model (1).py   # Original research script
 └── README.md                       # Setup & deployment manual
@@ -44,14 +46,14 @@ To make predictions extremely fast and responsive, the FastAPI backend avoids re
 
 ## Deployment & Setup Instructions
 
-### Method A: Running with Docker Compose (Recommended)
+### Method A: Running with Docker Compose
 
-This is the easiest way to launch both services in a production-ready environment.
+If Docker Desktop is installed, you can launch both services together:
 
 1. **Verify files:** Make sure `Electric_Vehicle_Population_Data.csv` is present in the root directory.
 2. **Build and start services:**
    ```bash
-   docker-compose up --build
+   docker compose up --build
    ```
    *Note: The backend image will automatically run the training script during the build step, pre-serializing the model inside the container.*
 3. **Access the application:**
@@ -60,21 +62,21 @@ This is the easiest way to launch both services in a production-ready environmen
 
 ---
 
-### Method B: Manual Local Development
-
-If you prefer to run the components locally without Docker, follow these steps:
+### Method B: Manual Local Development (Recommended if Docker is missing)
 
 #### 1. Setup Backend
-1. Navigate to the `backend/` directory:
+1. Open a terminal and navigate to the `backend/` directory:
    ```bash
    cd backend
    ```
 2. Create and activate a Python virtual environment:
    ```bash
-   python -m venv venv
    # On Windows:
+   py -m venv venv
    .\venv\Scripts\activate
+   
    # On macOS/Linux:
+   python3 -m venv venv
    source venv/bin/activate
    ```
 3. Install dependencies:
@@ -83,7 +85,11 @@ If you prefer to run the components locally without Docker, follow these steps:
    ```
 4. Train the model and serialize assets:
    ```bash
-   python train_model.py
+   # On Windows:
+   py train_model.py
+   
+   # On macOS/Linux:
+   python3 train_model.py
    ```
 5. Start the FastAPI server:
    ```bash
@@ -91,7 +97,7 @@ If you prefer to run the components locally without Docker, follow these steps:
    ```
 
 #### 2. Setup Frontend
-1. Open a new terminal and navigate to the `frontend/` directory:
+1. Open a **second terminal** and navigate to the `frontend/` directory:
    ```bash
    cd frontend
    ```
@@ -121,14 +127,40 @@ If you prefer to run the components locally without Docker, follow these steps:
 
 ### 2. Model Metadata
 - **Endpoint:** `GET /meta`
-- **Description:** Returns training metrics, list of manufacturers, make-to-model lookup maps, and the JSON-serializable decision tree split structure.
+- **Description:** Returns training metrics (including the confusion matrix), brand distributions, registrations over time, Gini feature importances, and the JSON-serializable decision tree split structure.
 - **Response Shape:**
   ```json
   {
-    "metrics": { "train_accuracy": 0.76, "test_accuracy": 0.75, "baseline_accuracy": 0.61, ... },
-    "makes": [ "TESLA", "BMW", ... ],
-    "models_by_make": { "TESLA": [ "MODEL 3", ... ] },
-    "tree_json": { "id": 0, "is_leaf": false, "feature": "Model_Frequency", ... }
+    "metrics": {
+      "train_accuracy": 0.7645,
+      "test_accuracy": 0.7582,
+      "baseline_accuracy": 0.6120,
+      "confusion_matrix": [[22045, 7812], [4210, 15480]],
+      "total_samples": 178234,
+      "bev_count": 112450,
+      "phev_count": 65784,
+      "avg_vehicle_age": 4.2
+    },
+    "makes": [ "TESLA", "BMW", "NISSAN", ... ],
+    "models_by_make": {
+      "TESLA": [ "MODEL 3", "MODEL Y", ... ]
+    },
+    "counties": [ "King", "Snohomish", ... ],
+    "tree_json": { "id": 0, "is_leaf": false, "feature": "Model_Frequency", ... },
+    "grouped_importances": {
+      "Model_Frequency": 0.4852,
+      "Vehicle Age": 0.3120,
+      "Make": 0.1425,
+      "Region": 0.0603
+    },
+    "make_distribution": [
+      { "make": "TESLA", "bev": 72000, "phev": 120, "total": 72120 },
+      ...
+    ],
+    "year_distribution": [
+      { "year": 2022, "bev": 24500, "phev": 9800 },
+      ...
+    ]
   }
   ```
 
