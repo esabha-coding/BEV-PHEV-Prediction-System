@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Local Environment
+.env
+.env.local
+.env.production
+.env.development
+.env.staging
+
+# Model Artifacts & Large Files (Excluded from Git)
+backend/model/model_assets.joblib
+Electric_Vehicle_Population_Data.csv
+extract_docs.py
+extract_docs.js
+
+# Build Output
+dist/
+build/
+.gradle/
+.idea/
+
+# OS Files
+.DS_Store
+desktop.ini
+Thumbs.db
