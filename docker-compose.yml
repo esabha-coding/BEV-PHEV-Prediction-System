@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  # FastAPI backend service
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: ev_prediction_backend
+    ports:
+      - "8000:8000"
+    restart: always
+
+  # React frontend dashboard service (Nginx)
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: ev_prediction_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: always

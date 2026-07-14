@@ -1,0 +1,94 @@
+Frontend UI/UX Planning Document
+Purpose: Define a modern, software-house level frontend for the BEV/PHEV Vehicle Type Prediction project. This document focuses on user experience, UI components, dashboard design and technologies.
+Selected Frontend Stack
+Framework
+React
+Language
+JavaScript (can be migrated to TypeScript later)
+Styling
+Tailwind CSS
+UI Components
+shadcn/ui
+Icons
+Lucide React
+Charts
+Recharts / Chart.js
+Mapping
+React-Leaflet / Mapbox GL (county-level EV distribution across Washington State)
+Animations
+Framer Motion
+HTTP Client
+Axios
+Routing
+React Router
+Theme
+Professional Light + Dark Mode
+BEV/PHEV Vehicle Classification Dashboard
+Business/analytics dashboard layout for automotive &amp; energy stakeholders
+KPI cards: total vehicles, BEV count, PHEV count, average electric range, average base MSRP
+Vehicle search and lookup (by VIN, Make, Model, or County)
+Prediction panel: input vehicle specs and get a live BEV vs PHEV classification with confidence score
+Category cards (e.g. Long-Range BEV, Entry PHEV, Premium BEV, Legacy Low-Range)
+Feature importance chart (which specs drive the Random Forest / Decision Tree prediction)
+Confusion matrix heatmap and ROC curve for model evaluation
+Pie chart: BEV vs PHEV distribution across the population
+Bar chart: top manufacturers by registration volume
+Interactive map: geographic distribution of EVs by Washington County / Legislative District
+Filters: County, Make, Model Year range, CAFV eligibility, electric range range
+Export option (CSV / PDF report of predictions and filtered results)
+Responsive design across mobile, tablet, desktop
+Loading animation during classification/model calls
+Toast notifications for actions (export success, filter applied, errors)
+Common UI Components
+Responsive navigation sidebar
+Professional header with project branding
+Gradient cards for KPI summaries
+Rounded buttons with hover effects
+Glassmorphism sections for the map and feature-importance panels
+Loading spinners &amp; skeleton screens
+Error and success alerts
+Professional forms with validation (filter/search/prediction inputs)
+Mobile, tablet and desktop responsive layout
+Color Palette
+Inspired by the BMW brand identity — blue, white, and black — to give the dashboard an automotive, premium-engineering feel appropriate for a vehicle analytics product. Functional alert colors (success/warning/danger) are layered in for usability.
+Role
+Swatch
+Hex
+Primary
+BMW Blue
+#0066B1
+Secondary
+BMW Light Blue
+#1C69D4
+Success
+Signal Green
+#1E7A3D
+Warning
+Amber
+#D9A200
+Danger
+Signal Red
+#B3261E
+Neutral - Background
+Pure White
+#FFFFFF
+Neutral - Surface
+Light Gray
+#F2F2F2
+Neutral - Muted Text
+Slate Gray
+#6B6B6B
+Neutral - Dark Text
+BMW Black
+#000000
+Software House Quality Standards
+Modern SaaS-style interface
+Consistent design system
+Accessible components
+Reusable React components
+Clean folder structure
+Fast loading experience
+Portfolio-quality appearance
+Production-ready UI architecture
+Final Goal
+The frontend should look like a commercial automotive-analytics product rather than a university assignment. It should provide an intuitive experience, premium BMW-inspired branding, an interactive geographic map, clear model-explainability visuals, and seamless integration with a backend serving the Random Forest / Decision Tree BEV-PHEV classification model.
