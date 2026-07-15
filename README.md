@@ -1,194 +1,269 @@
-# BEVPHEV Prediction System — Hosted Service
+# 🚗 BEVPHEV Prediction System
 
-An end-to-end, production-ready, hosted service for classifying Electric Vehicles as either a **Battery Electric Vehicle (BEV)** or a **Plug-in Hybrid Electric Vehicle (PHEV)**. It consists of a high-performance **FastAPI backend** that hosts a trained Decision Tree Classifier, and a premium **React frontend dashboard** featuring BMW-inspired colors, vehicle lookups, KPI metrics, animated Recharts analytics, and an interactive decision path visualization.
+> **Live Demo:** [bev-phev-prediction-system.vercel.app](https://bev-phev-prediction-system.vercel.app/)
+
+An end-to-end, production-ready hosted service for classifying Electric Vehicles as either a **Battery Electric Vehicle (BEV)** or a **Plug-in Hybrid Electric Vehicle (PHEV)**.
+
+Built with a high-performance **FastAPI** backend hosting a trained **Decision Tree Classifier**, and a premium **React** frontend dashboard featuring BMW-inspired colors, vehicle lookups, KPI metrics, animated Recharts analytics, and an interactive decision path visualization.
 
 ---
 
-## Workspace Structure
+## 📋 Table of Contents
 
-```bash
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Model Architecture](#-model-architecture)
+- [API Reference](#-api-reference)
+- [Setup & Installation](#-setup--installation)
+- [Deployment](#-deployment)
+
+---
+
+## ✨ Features
+
+- 🔍 **Live Vehicle Classification** — Predict BEV vs PHEV from Make, Model, County, and Year
+- 🌳 **Interactive Decision Tree** — Visualizes the exact decision path taken for each prediction
+- 📊 **KPI Dashboard** — Total vehicles, BEV/PHEV counts, accuracy metrics, and feature importances
+- 📈 **Recharts Analytics** — Brand distribution bar charts and year-over-year registration trends
+- 🎨 **BMW-Inspired UI** — Premium blue/white/black color palette with Tailwind CSS
+- ⚡ **Pre-trained Model** — Model serialized at build time for sub-millisecond prediction latency
+- 🐳 **Docker Ready** — Single `docker compose up --build` spins up the full stack
+
+---
+
+## 🛠 Tech Stack
+
+| Layer | Technology |
+|---|---|
+| **Frontend** | React, Vite, Tailwind CSS, Recharts, Framer Motion |
+| **Backend** | FastAPI, Uvicorn, scikit-learn, pandas, joblib |
+| **ML Model** | Decision Tree Classifier (depth=4, balanced weights) |
+| **Containerization** | Docker, Docker Compose, Nginx |
+| **Frontend Hosting** | Vercel |
+| **Backend Hosting** | Railway |
+
+---
+
+## 📁 Project Structure
+
+```
 BEVPHEV Prediction System/
 ├── backend/
 │   ├── model/                      # Serialized model directory
 │   ├── Dockerfile                  # Container definition for FastAPI
 │   ├── main.py                     # FastAPI server & prediction routes
 │   ├── requirements.txt            # Python dependencies
-│   ├── train_model.py              # Script to clean data and train scikit-learn model
+│   ├── train_model.py              # Script to clean data & train model
 │   └── test_backend.py             # Test harness to verify routes locally
 ├── frontend/
 │   ├── src/
-│   │   ├── App.jsx                 # Dashboard React component with dynamic tree rendering & Recharts
-│   │   ├── index.css               # Stylesheet (Tailwind, Inter font, custom utilities)
-│   │   └── main.jsx                # React Entrypoint
-│   ├── Dockerfile                  # Stage-1 build Node, Stage-2 serve Nginx
-│   ├── index.html                  # Core HTML structure & font loading
-│   ├── nginx.conf                  # Nginx server & backend reverse-proxy routing
-│   ├── postcss.config.js           # PostCSS configuration
-│   ├── tailwind.config.js          # Tailwind custom palette configuration
+│   │   ├── App.jsx                 # Dashboard with dynamic tree & Recharts
+│   │   ├── index.css               # Tailwind + custom utilities
+│   │   └── main.jsx                # React entrypoint
+│   ├── Dockerfile                  # Stage-1 Node build, Stage-2 Nginx serve
+│   ├── nginx.conf                  # Nginx + backend reverse-proxy config
+│   ├── tailwind.config.js          # Custom BMW palette configuration
 │   └── vite.config.js              # Vite server & proxy mapping
 ├── docker-compose.yml              # Multi-container orchestration
-├── .gitignore                      # Git configuration to exclude temporary build & env folders
-├── Electric_Vehicle_Population_Data.csv # Main vehicle dataset (36MB)
-├── ev_decision_tree_model (1).py   # Original research script
-└── README.md                       # Setup & deployment manual
+├── railway.json                    # Railway deployment config
+├── .gitignore
+├── Electric_Vehicle_Population_Data.csv   # Washington State EV dataset (36MB)
+└── README.md
 ```
 
 ---
 
-## Feature Engineering & Model Pre-training
+## 🧠 Model Architecture
 
-To make predictions extremely fast and responsive, the FastAPI backend avoids reading the raw 36MB dataset at startup or during prediction requests. Instead:
-1. **Pre-training:** Running `backend/train_model.py` reads `Electric_Vehicle_Population_Data.csv`, cleans the data, trains the `DecisionTreeClassifier` (depth=4, balanced weights), and serializes the model and helper variables into `backend/model/model_assets.joblib`.
-2. **Metadata extraction:** The training script automatically parses the decision tree structure into a JSON representation containing node IDs, splits (features and thresholds), sample counts, and class probabilities.
-3. **Traversed Path Highlighting:** When a prediction is requested, scikit-learn's `decision_path` method is run for the input. The list of traversed node IDs is returned. The frontend dashboard then highlights this path in **Active Blue** inside the interactive decision tree diagram.
+To keep predictions fast, the backend avoids reading the raw 36MB CSV at runtime:
 
----
+1. **Pre-training** — `train_model.py` reads the dataset, cleans it, trains a `DecisionTreeClassifier` (depth=4, balanced class weights), and serializes the model and helper variables into `backend/model/model_assets.joblib`
+2. **Metadata extraction** — The training script parses the full decision tree into a JSON structure containing node IDs, splits, sample counts, and class probabilities
+3. **Path highlighting** — On each prediction, scikit-learn's `decision_path` returns the list of traversed node IDs, which the frontend highlights in **Active Blue** in the interactive tree diagram
 
-## Deployment & Setup Instructions
+### Model Performance
 
-### Method A: Running with Docker Compose
+| Metric | Score |
+|---|---|
+| Train Accuracy | 76.45% |
+| Test Accuracy | 75.82% |
+| Baseline Accuracy | 61.20% |
 
-If Docker Desktop is installed, you can launch both services together:
+### Top Feature Importances
 
-1. **Verify files:** Make sure `Electric_Vehicle_Population_Data.csv` is present in the root directory.
-2. **Build and start services:**
-   ```bash
-   docker compose up --build
-   ```
-   *Note: The backend image will automatically run the training script during the build step, pre-serializing the model inside the container.*
-3. **Access the application:**
-   - **Frontend Dashboard:** [http://localhost](http://localhost) (Port 80)
-   - **Backend API:** [http://localhost:8000](http://localhost:8000) (Interactive Swagger docs available at [http://localhost:8000/docs](http://localhost:8000/docs))
-
----
-
-### Method B: Manual Local Development (Recommended if Docker is missing)
-
-#### 1. Setup Backend
-1. Open a terminal and navigate to the `backend/` directory:
-   ```bash
-   cd backend
-   ```
-2. Create and activate a Python virtual environment:
-   ```bash
-   # On Windows:
-   py -m venv venv
-   .\venv\Scripts\activate
-   
-   # On macOS/Linux:
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-4. Train the model and serialize assets:
-   ```bash
-   # On Windows:
-   py train_model.py
-   
-   # On macOS/Linux:
-   python3 train_model.py
-   ```
-5. Start the FastAPI server:
-   ```bash
-   uvicorn main:app --reload --port 8000
-   ```
-
-#### 2. Setup Frontend
-1. Open a **second terminal** and navigate to the `frontend/` directory:
-   ```bash
-   cd frontend
-   ```
-2. Install Node packages:
-   ```bash
-   npm install
-   ```
-3. Start the Vite development server:
-   ```bash
-   npm run dev
-   ```
-4. Open your browser and navigate to [http://localhost:5173](http://localhost:5173). Vite will proxy all `/api/*` requests to the FastAPI backend running on port 8000.
+| Feature | Importance |
+|---|---|
+| Model Frequency | 48.52% |
+| Vehicle Age | 31.20% |
+| Make | 14.25% |
+| Region | 6.03% |
 
 ---
 
-## API Documentation
+## 📡 API Reference
 
-### 1. Health Check
-- **Endpoint:** `GET /health`
-- **Response:**
-  ```json
-  {
-    "status": "healthy",
-    "model_loaded": true
-  }
-  ```
+### `GET /health`
+Returns server and model status.
+```json
+{
+  "status": "healthy",
+  "model_loaded": true
+}
+```
 
-### 2. Model Metadata
-- **Endpoint:** `GET /meta`
-- **Description:** Returns training metrics (including the confusion matrix), brand distributions, registrations over time, Gini feature importances, and the JSON-serializable decision tree split structure.
-- **Response Shape:**
-  ```json
-  {
-    "metrics": {
-      "train_accuracy": 0.7645,
-      "test_accuracy": 0.7582,
-      "baseline_accuracy": 0.6120,
-      "confusion_matrix": [[22045, 7812], [4210, 15480]],
-      "total_samples": 178234,
-      "bev_count": 112450,
-      "phev_count": 65784,
-      "avg_vehicle_age": 4.2
-    },
-    "makes": [ "TESLA", "BMW", "NISSAN", ... ],
-    "models_by_make": {
-      "TESLA": [ "MODEL 3", "MODEL Y", ... ]
-    },
-    "counties": [ "King", "Snohomish", ... ],
-    "tree_json": { "id": 0, "is_leaf": false, "feature": "Model_Frequency", ... },
-    "grouped_importances": {
-      "Model_Frequency": 0.4852,
-      "Vehicle Age": 0.3120,
-      "Make": 0.1425,
-      "Region": 0.0603
-    },
-    "make_distribution": [
-      { "make": "TESLA", "bev": 72000, "phev": 120, "total": 72120 },
-      ...
-    ],
-    "year_distribution": [
-      { "year": 2022, "bev": 24500, "phev": 9800 },
-      ...
-    ]
-  }
-  ```
+---
 
-### 3. Prediction API
-- **Endpoint:** `POST /predict`
-- **Request Body (JSON):**
-  ```json
-  {
+### `GET /meta`
+Returns training metrics, brand distributions, registrations over time, feature importances, and the full decision tree JSON structure.
+
+```json
+{
+  "metrics": {
+    "train_accuracy": 0.7645,
+    "test_accuracy": 0.7582,
+    "baseline_accuracy": 0.6120,
+    "confusion_matrix": [[22045, 7812], [4210, 15480]],
+    "total_samples": 178234,
+    "bev_count": 112450,
+    "phev_count": 65784,
+    "avg_vehicle_age": 4.2
+  },
+  "makes": ["TESLA", "BMW", "NISSAN"],
+  "tree_json": { "id": 0, "is_leaf": false, "feature": "Model_Frequency" },
+  "grouped_importances": {
+    "Model_Frequency": 0.4852,
+    "Vehicle Age": 0.3120
+  },
+  "make_distribution": [
+    { "make": "TESLA", "bev": 72000, "phev": 120, "total": 72120 }
+  ],
+  "year_distribution": [
+    { "year": 2022, "bev": 24500, "phev": 9800 }
+  ]
+}
+```
+
+---
+
+### `POST /predict`
+Classifies a vehicle as BEV or PHEV and returns the decision path.
+
+**Request Body:**
+```json
+{
+  "make": "TESLA",
+  "model": "MODEL 3",
+  "county": "King",
+  "model_year": 2022
+}
+```
+
+**Response:**
+```json
+{
+  "prediction": "Battery Electric Vehicle (BEV)",
+  "probabilities": {
+    "Battery Electric Vehicle (BEV)": 0.99,
+    "Plug-in Hybrid Electric Vehicle (PHEV)": 0.01
+  },
+  "decision_path": [0, 2, 6],
+  "preprocessed_inputs": {
     "make": "TESLA",
-    "model": "MODEL 3",
-    "county": "King",
-    "model_year": 2022
+    "region": "Puget Sound",
+    "vehicle_age": 4,
+    "model_frequency": 5128
   }
-  ```
-- **Response Shape:**
-  ```json
-  {
-    "prediction": "Battery Electric Vehicle (BEV)",
-    "probabilities": {
-      "Battery Electric Vehicle (BEV)": 0.99,
-      "Plug-in Hybrid Electric Vehicle (PHEV)": 0.01
-    },
-    "decision_path": [0, 2, 6],
-    "preprocessed_inputs": {
-      "make": "TESLA",
-      "region": "Puget Sound",
-      "vehicle_age": 4,
-      "model_frequency": 5128
-    }
-  }
+}
+```
+
+Interactive Swagger docs available at `/docs` when running locally.
+
+---
+
+## 🚀 Setup & Installation
+
+### Method A — Docker Compose (Recommended)
+
+> Requires Docker Desktop installed and running.
+
+```bash
+# 1. Ensure the dataset is present in the root directory
+ls Electric_Vehicle_Population_Data.csv
+
+# 2. Build and start both services
+docker compose up --build
+
+# 3. Access the application
+# Frontend:  http://localhost
+# Backend:   http://localhost:8000
+# API Docs:  http://localhost:8000/docs
+```
+
+The backend image automatically runs `train_model.py` during the build step, pre-serializing the model inside the container.
+
+---
+
+### Method B — Manual Local Development
+
+**Terminal 1 — Backend:**
+```bash
+cd backend
+
+# Create and activate virtual environment
+py -m venv venv          # Windows
+.\venv\Scripts\activate  # Windows
+# python3 -m venv venv  # macOS/Linux
+# source venv/bin/activate
+
+# Install dependencies and train model
+pip install -r requirements.txt
+py train_model.py
+
+# Start the API server
+uvicorn main:app --reload --port 8000
+```
+
+**Terminal 2 — Frontend:**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) — Vite proxies all `/api/*` requests to the FastAPI backend on port 8000.
+
+---
+
+## ☁️ Deployment
+
+| Service | Platform | URL |
+|---|---|---|
+| Frontend | Vercel | [bev-phev-prediction-system.vercel.app](https://bev-phev-prediction-system.vercel.app/) |
+| Backend | Railway | Auto-deployed from `backend/` via `railway.json` |
+
+**Environment variable required on Vercel:**
+
+| Key | Value |
+|---|---|
+| `VITE_API_URL` | Your Railway backend public URL |
+
+Any push to `main` triggers automatic redeployment on both platforms.
+
+---
+
+## 📊 Dataset
+
+**Washington State Electric Vehicle Population Data**
+- Source: [data.wa.gov](https://catalog.data.gov/dataset/electric-vehicle-population-data) — Washington State Dept. of Licensing
+- Records: 135,038 vehicle registrations
+- Features: 17 columns including Make, Model, County, Model Year, Electric Range, CAFV Eligibility
+- Class distribution: BEV 76.9% (103,882) | PHEV 23.1% (31,156)
+
+---
+
+## 👤 Author
+
+**Sabah** — [@esabha-coding](https://github.com/esabha-coding)
+
   ```https://bev-phev-prediction-system.vercel.app/
