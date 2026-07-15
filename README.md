@@ -191,4 +191,4 @@ If Docker Desktop is installed, you can launch both services together:
       "model_frequency": 5128
     }
   }
-  ```
+  ```https://bev-phev-prediction-system.vercel.app/
