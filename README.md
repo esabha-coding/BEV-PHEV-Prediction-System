@@ -1,4 +1,4 @@
-# 🚗 BEVPHEV Prediction System
+# BEVPHEV Prediction System
 
 > **Live Demo:** [bev-phev-prediction-system.vercel.app](https://bev-phev-prediction-system.vercel.app/)
 
@@ -8,7 +8,7 @@ Built with a high-performance **FastAPI** backend hosting a trained **Decision T
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Features](#-features)
 - [Tech Stack](#-tech-stack)
@@ -20,7 +20,7 @@ Built with a high-performance **FastAPI** backend hosting a trained **Decision T
 
 ---
 
-## ✨ Features
+## Features
 
 - 🔍 **Live Vehicle Classification** — Predict BEV vs PHEV from Make, Model, County, and Year
 - 🌳 **Interactive Decision Tree** — Visualizes the exact decision path taken for each prediction
@@ -32,7 +32,7 @@ Built with a high-performance **FastAPI** backend hosting a trained **Decision T
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |---|---|
@@ -45,7 +45,7 @@ Built with a high-performance **FastAPI** backend hosting a trained **Decision T
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 BEVPHEV Prediction System/
@@ -83,7 +83,7 @@ BEVPHEV Prediction System/
 
 ---
 
-## 🧠 Model Architecture
+## Model Architecture
 
 To keep predictions fast, the backend avoids reading the raw 36MB CSV at runtime:
 
@@ -110,7 +110,7 @@ To keep predictions fast, the backend avoids reading the raw 36MB CSV at runtime
 
 ---
 
-## 📡 API Reference
+## API Reference
 
 ### `GET /health`
 Returns server and model status.
@@ -190,7 +190,7 @@ Interactive Swagger docs available at `/docs` when running locally.
 
 ---
 
-## 🚀 Setup & Installation
+## Setup & Installation
 
 ### Method A — Docker Compose (Recommended)
 
@@ -244,7 +244,7 @@ Open [http://localhost:5173](http://localhost:5173) — Vite proxies all `/api/*
 
 ---
 
-## ☁️ Deployment
+## Deployment
 
 | Service | Platform | URL |
 |---|---|---|
@@ -261,7 +261,7 @@ Any push to `main` triggers automatic redeployment on both platforms.
 
 ---
 
-## 📊 Dataset
+## Dataset
 
 **Washington State Electric Vehicle Population Data**
 - Source: [data.wa.gov](https://catalog.data.gov/dataset/electric-vehicle-population-data) — Washington State Dept. of Licensing
@@ -271,7 +271,7 @@ Any push to `main` triggers automatic redeployment on both platforms.
 
 ---
 
-## 👤 Author
+## Author
 
 **Sabah** — [@esabha-coding](https://github.com/esabha-coding)
 
