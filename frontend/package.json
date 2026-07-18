@@ -14,7 +14,7 @@
     "react-dom": "^18.2.0",
     "lucide-react": "^0.263.0",
     "axios": "^1.4.0",
-    "recharts": "^2.7.2",
+    "recharts": "^3.0.0",
     "framer-motion": "^10.12.16"
   },
   "devDependencies": {
