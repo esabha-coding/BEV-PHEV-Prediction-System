@@ -162,6 +162,10 @@ export default function App() {
     setLoading(false);
   };
 
+  const handleReconnect = () => {
+    fetchMetadata();
+  };
+
   // Run Forecast calculation combining classifier outputs with simulation variables
   const generateForecast = async () => {
     setPredicting(true);
@@ -330,7 +334,7 @@ export default function App() {
 
           {/* Connection URL Selector / Status Badge */}
           <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2 bg-slate-900/60 border border-slate-800 px-3 py-1.5 rounded-xl">
+            <div className="api-status-bar flex items-center gap-2 bg-slate-900/60 border border-slate-800 px-3 py-1.5 rounded-xl">
               <Settings className="w-3.5 h-3.5 text-slate-500" />
               <span className="text-[10px] text-slate-400 font-mono">API:</span>
               <input 
@@ -341,11 +345,11 @@ export default function App() {
                 placeholder="Railway API URL"
               />
               <button 
-                onClick={fetchMetadata}
+                onClick={handleReconnect}
                 className="text-[9px] text-blue-400 hover:text-blue-300 font-bold ml-1 uppercase"
                 title="Reload backend metadata config"
               >
-                Reconnect
+                RECONNECT
               </button>
             </div>
 
