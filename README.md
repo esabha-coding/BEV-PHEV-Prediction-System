@@ -56,6 +56,13 @@ BEVPHEV Prediction System/
 │   ├── requirements.txt            # Python dependencies
 │   ├── train_model.py              # Script to clean data & train model
 │   └── test_backend.py             # Test harness to verify routes locally
+├── dataset/
+│   └── Electric_Vehicle_Population_Data.csv # Washington State EV dataset (36MB)
+├── doc/
+│   ├── Frontend_UI_UX_Planning_Document_EV.docx # Planning docs
+│   ├── Frontend_UI_UX_Planning_Document_EV.txt
+│   ├── ML_Dataset_Planning_Document_EV.docx
+│   └── ML_Dataset_Planning_Document_EV.txt
 ├── frontend/
 │   ├── src/
 │   │   ├── App.jsx                 # Dashboard with dynamic tree & Recharts
@@ -65,10 +72,12 @@ BEVPHEV Prediction System/
 │   ├── nginx.conf                  # Nginx + backend reverse-proxy config
 │   ├── tailwind.config.js          # Custom BMW palette configuration
 │   └── vite.config.js              # Vite server & proxy mapping
+├── model/                          # Saved/exported models (external)
+├── notebook/
+│   └── EV_Decision_Tree_Model.ipynb # Jupyter notebook development
 ├── docker-compose.yml              # Multi-container orchestration
 ├── railway.json                    # Railway deployment config
 ├── .gitignore
-├── Electric_Vehicle_Population_Data.csv   # Washington State EV dataset (36MB)
 └── README.md
 ```
 
@@ -188,8 +197,8 @@ Interactive Swagger docs available at `/docs` when running locally.
 > Requires Docker Desktop installed and running.
 
 ```bash
-# 1. Ensure the dataset is present in the root directory
-ls Electric_Vehicle_Population_Data.csv
+# 1. Ensure the dataset is present in the dataset directory
+ls dataset/Electric_Vehicle_Population_Data.csv
 
 # 2. Build and start both services
 docker compose up --build
