@@ -9,7 +9,7 @@ COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the dataset from workspace root (handled via compose context)
-COPY Electric_Vehicle_Population_Data.csv .
+COPY dataset/Electric_Vehicle_Population_Data.csv .
 
 # Copy backend source files
 COPY backend/ /app/

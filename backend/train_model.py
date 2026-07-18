@@ -63,6 +63,8 @@ def train_and_serialize():
     
     # Locate dataset
     csv_paths = [
+        "../dataset/Electric_Vehicle_Population_Data.csv",
+        "dataset/Electric_Vehicle_Population_Data.csv",
         "../Electric_Vehicle_Population_Data.csv",
         "Electric_Vehicle_Population_Data.csv"
     ]
