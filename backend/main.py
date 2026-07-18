@@ -28,6 +28,7 @@ app.add_middleware(
         "http://127.0.0.1:5173",
         "https://bev-phev-prediction-system.vercel.app"
     ],
+    allow_origin_regex=r"https://bev-phev-prediction-system.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

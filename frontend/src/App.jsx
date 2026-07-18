@@ -59,6 +59,15 @@ const MOCK_META = {
   counties: ["King", "Snohomish", "Pierce", "Kitsap", "Thurston", "Spokane", "Yakima", "Whatcom", "Clark"]
 };
 
+const formatUrl = (url) => {
+  if (!url) return "";
+  let clean = url.trim();
+  if (!clean.startsWith("http://") && !clean.startsWith("https://")) {
+    clean = `https://${clean}`;
+  }
+  return clean;
+};
+
 export default function App() {
   // Config & State
   const [backendUrl, setBackendUrl] = useState(API_BASE_URL);
@@ -114,8 +123,8 @@ export default function App() {
           "http://localhost:8000"
         ].filter(Boolean);
 
-    // De-duplicate candidates
-    const uniqueCandidates = [...new Set(candidates)];
+    // De-duplicate candidates and format with http/https prefix
+    const uniqueCandidates = [...new Set(candidates.map(formatUrl))];
     
     let successUrl = null;
     let successData = null;
@@ -171,8 +180,9 @@ export default function App() {
     let baselineLabel = "Battery Electric Vehicle (BEV)";
 
     try {
+      const cleanUrl = formatUrl(backendUrl);
       // Fetch from local / Railway backend (Explicit POST and JSON header)
-      const res = await axios.post(`${backendUrl}/predict`, payload, {
+      const res = await axios.post(`${cleanUrl}/predict`, payload, {
         headers: {
           'Content-Type': 'application/json'
         }
