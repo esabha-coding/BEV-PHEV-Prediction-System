@@ -334,7 +334,7 @@ export default function App() {
 
           {/* Connection URL Selector / Status Badge */}
           <div className="flex flex-wrap items-center gap-4">
-            <div className="api-status-bar flex items-center gap-2 bg-slate-900/60 border border-slate-800 px-3 py-1.5 rounded-xl">
+            <div className="api-status-bar flex items-center gap-2 bg-slate-900/60 border border-slate-800 px-3 py-1.5 rounded-xl" style={{ display: 'none' }}>
               <Settings className="w-3.5 h-3.5 text-slate-500" />
               <span className="text-[10px] text-slate-400 font-mono">API:</span>
               <input 
